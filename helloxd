@@ -1,0 +1,94 @@
+class CoffeeMachine: #klassen kan ses som et "blueprint" for hvad vores objekt, i dette tilfælde kaffemaskinen, vil have af methods og attributes
+    running = False
+
+    def __init__(self, water, milk, coffee_beans): # ved init(initialiser) sætter man præcedens for objektets funktioner
+        # hvad kaffemaskinen indeholder =attributes (der skelnes mellem attributes og methods når det kommer til OOP)
+        self.water = water # attributes er hvad et objekt har og er, hvor method er hvad objektet kan gøre - hvilke funktioner den har
+        self.milk = milk
+        self.coffee_beans = coffee_beans
+
+        # hvis maskinen ikke kører så vil den kører af sig selv / startskærmen
+        if not CoffeeMachine.running:
+            self.start()
+
+    def start(self): #ved "self" så referer man til objektet
+        self.running = True
+        self.action = input("Hvilken handling ønsker du at udføre? (køb, fyld, lagerstatus):\n")
+        print()
+        # valg som kaffemaskinen kan udføre
+        action_choices = {"køb": self.buy, "fyld": self.fill,"lagerstatus": self.status}
+        if self.action in action_choices: # hvis de korrekte input bliver tastet ind vil systemet bearbejde dem og tyde om de er relevante
+            action_choices[self.action]() # hvis de er relevante vil den gå videre til det næste stykke kode
+        else:
+            exit() #hvis koden ikke er relevant vil den afvise det bestemte input og gå ud af programmet
+
+    def return_to_menu(self):  # vender tilbage til menuen efter en handling
+        print()
+        self.start()
+
+    def available_check(self):  # tjekker om den har ressourcer nok, til at lave den givne kaffe
+        self.not_available = ""  # ved at tjekke om mængden på ressourcerne går under 0 efter de er blevet trukket fra
+        if self.water - self.reduced[0] < 0: # elif kører hvis if er inkorrekt og hvis både if og elif er inkorrekt vil else run
+            self.not_available = "vand"
+        elif self.milk - self.reduced[1] < 0:
+            self.not_available = "mælk"
+        elif self.coffee_beans - self.reduced[2] < 0:
+            self.not_available = "kaffebønner"
+
+        if self.not_available != "":  # hvis maskinen opdager at en ressource er under 0 efter der er blevet trukket fra
+            print(f"Undskyld, vi har ikke {self.not_available} nok !")
+            return False
+        else:  # hvis du har nok til at lave en kaffe
+            print("Vi har ressourcer nok til at lave dig en kaffe. Din kaffe er klar om et øjebik")
+            return True
+
+    def deduct_supplies(self):  # udfører en handling fra "reduced list", baseret på den valgte kaffe
+        self.water -= self.reduced[0] # når en ordre udføreres succesfuldt, og der er nok ressourcer, trækkes den givne mængde fra
+        self.milk -= self.reduced[1]
+        self.coffee_beans -= self.reduced[2]
+
+    def buy(self):
+        self.choice = input("Hvad ønsker du at købe? 1. Cappucino, 2. Cafe Latte, 3. Americano 4. Espresso \n \n - Tast 'tilbage' for at gå tilbage til menuen:\n")
+        if self.choice == '1':
+            self.reduced = [120,120, 16,]  # vand, mælk, kaffebønner
+            if self.available_check():  # tjekker om de relevante ressourcer er på lager
+                self.deduct_supplies()  # hvis de er så trækkes de fra
+
+        elif self.choice == '2':
+            self.reduced = [50, 200, 16]
+            if self.available_check():
+                self.deduct_supplies()
+
+        elif self.choice == "3":
+            self.reduced = [200, 15, 12,]
+            if self.available_check():
+                self.deduct_supplies()
+
+        elif self.choice == "4":
+            self.reduced = [30, 60, 7,]
+            if self.available_check():
+                self.deduct_supplies()
+
+        elif self.choice == "tilbage":  # hvis brugeren har ændret mening
+            self.return_to_menu()
+
+        self.return_to_menu()
+
+    def fill(self):  # for at fylde kaffemaskinen med diverse ressourcer
+        self.water += int(input("Skriv hvor mange ml vand du ønsker at tilføje:\n")) #int = integer, helt tal
+        self.milk += int(input("Skriv hvor mangle ml mælk du ønsker at tilføje:\n"))
+        self.coffee_beans += int(input("Skriv hvor mange gram kaffe bønner du ønsker at tilføje:\n"))
+        self.return_to_menu()
+
+
+
+    def status(self):  # viser mængden på diverse ressourcer
+        print(f" Kaffemmaskinen har:")
+        print(f"{self.water} ml vand")
+        print(f"{self.milk} ml mælk")
+        print(f"{self.coffee_beans} gram kaffebønner")
+        self.return_to_menu() #går tilbage til menuen efter
+
+
+CoffeeMachine(800, 750, 200,)  # mængden på diverse ressoucer fra starten
+# vand, mælk, kaffebønner,
